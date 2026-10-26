@@ -12,7 +12,12 @@ jobs:
     container: swift:${{ matrix.swift }}-noble
     steps:
       - name: Install dependencies
-        run: apt update -y; apt install -y libavahi-compat-libdnssd-dev
+        run: apt update -y; apt install -y libavahi-compat-libdnssd-dev avahi-daemon dbus
+      - name: Start Avahi
+        run: |
+          mkdir -p /run/dbus
+          dbus-daemon --system --fork
+          avahi-daemon --daemonize --no-chroot
       - uses: actions/checkout@v4
       - name: Verify Swift version
         run: swift -version | grep ${{ matrix.swift }}
