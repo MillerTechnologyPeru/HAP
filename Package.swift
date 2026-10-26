@@ -54,6 +54,6 @@ let package = Package(
 #endif
 
 #if os(Linux)
-    package.dependencies.append(.package(url: "https://github.com/Bouke/NetService.git", from: "0.7.0"))
+    package.dependencies.append(.package(url: "https://github.com/colemancda/NetService.git", .branch("master")))
     package.targets.first(where: { $0.name == "HAP" })!.dependencies.append("NetService")
 #endif
