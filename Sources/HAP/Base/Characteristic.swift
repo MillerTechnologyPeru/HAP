@@ -19,6 +19,7 @@ protocol Characteristic: AnyObject, JSONSerializable {
     var type: CharacteristicType { get }
     var permissions: [CharacteristicPermission] { get }
     func getValue() -> JSONValueType?
+    func willReadValue(fromChannel: Channel?)
     func setValue(_: Any?, fromChannel: Channel?) throws
     var description: String? { get }
     var format: CharacteristicFormat? { get }
@@ -94,6 +95,10 @@ public class GenericCharacteristic<T: CharacteristicValueType>: Characteristic, 
 
     func getValue() -> JSONValueType? {
         value?.jsonValueType
+    }
+
+    func willReadValue(fromChannel channel: Channel?) {
+        service?.characteristicWillReadValue(self)
     }
 
     func setValue(_ newValue: Any?, fromChannel channel: Channel?) throws {

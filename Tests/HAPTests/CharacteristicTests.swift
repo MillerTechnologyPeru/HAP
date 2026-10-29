@@ -56,4 +56,32 @@ class CharacteristicTests: XCTestCase {
         try! characteristic.setValue(2, fromChannel: nil)
         XCTAssertEqual(characteristic.value, 1)
     }
+
+    func testDataValueType() {
+        let type = CharacteristicType(UUID(uuidString: "E863F116-079E-48FF-8F27-9C2605A29F52")!)
+        let characteristic = GenericCharacteristic<Data>(type: type, value: Data([0x01, 0x02, 0xFF]))
+        XCTAssertEqual(characteristic.format, .data)
+        XCTAssertEqual(characteristic.getValue() as? String, "AQL/")
+        try! characteristic.setValue("AA==", fromChannel: nil)
+        XCTAssertEqual(characteristic.value, Data([0x00]))
+        XCTAssertThrowsError(try characteristic.setValue("not base64", fromChannel: nil))
+    }
+
+    func testWillReadValue() {
+        final class Counter: Service {
+            let count = GenericCharacteristic<UInt8>(type: .batteryLevel, value: 0, permissions: [.read])
+            init() {
+                super.init(type: .battery, characteristics: [AnyCharacteristic(count)])
+            }
+            override func characteristicWillReadValue<T>(_ characteristic: GenericCharacteristic<T>) {
+                count.value = (count.value ?? 0) + 1
+            }
+        }
+        let service = Counter()
+        let characteristic = service.characteristics.first!
+        characteristic.service = service // set by the accessory
+        characteristic.willReadValue(fromChannel: nil)
+        characteristic.willReadValue(fromChannel: nil)
+        XCTAssertEqual(characteristic.getValue() as? UInt8, 2)
+    }
 }

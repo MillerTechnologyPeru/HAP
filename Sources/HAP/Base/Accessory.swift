@@ -113,6 +113,11 @@ open class Accessory: Hashable, JSONSerializable {
 
     }
 
+    /// Characteristic's value is about to be read by controller. Override to
+    /// update the value before it is returned.
+    open func characteristicWillReadValue<T>(_ characteristic: GenericCharacteristic<T>,
+                                             ofService service: Service) { }
+
     public func serialized() -> [String: JSONValueType] {
         [
             "aid": aid,
