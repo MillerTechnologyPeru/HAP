@@ -54,6 +54,7 @@ func characteristics(device: Device, channel: Channel, request: HTTPRequest) -> 
                 continue
             }
 
+            characteristic.willReadValue(fromChannel: channel)
             var value: Protocol.Value?
             switch characteristic.getValue() {
             case let _value as Double: value = .double(_value)

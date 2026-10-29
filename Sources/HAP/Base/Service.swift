@@ -113,6 +113,12 @@ open class Service: NSObject, JSONSerializable {
         accessory?.characteristic(characteristic, ofService: self, didChangeValue: newValue)
     }
 
+    /// Characteristic's value is about to be read by controller. Override to
+    /// update the value before it is returned.
+    open func characteristicWillReadValue<T>(_ characteristic: GenericCharacteristic<T>) {
+        accessory?.characteristicWillReadValue(characteristic, ofService: self)
+    }
+
     public func serialized() -> [String: JSONValueType] {
         var json: [String: JSONValueType] = [
             "iid": iid,
